@@ -1,16 +1,21 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
+
+import {MockV3Aggregator} from "../test/mock/MockV3Aggregator.sol";
 import {Script} from "forge-std/Script.sol";
-contract HelperConfig is Script{
+
+contract HelperConfig is Script {
+    NetworkConfig public activeNetworkConfig;
+
+    uint8 public constant DECIMALS = 8;
+    int256 public constant INITIAL_PRICE = 2000e8;
 
     struct NetworkConfig {
-        address pricefeed;
+        address priceFeed;
     }
 
-    NetworkConfig public  activeNetworkConfig;
-    uint public constant DECIMALS = 8;
-    int256 public constant INTIAL_PRICE = 200e8;
-    
+    event HelperConfig__CreatedMockPriceFeed(address priceFeed);
+
     constructor() {
         if (block.chainid == 11155111) {
             activeNetworkConfig = getSepoliaEthConfig();
@@ -26,6 +31,7 @@ contract HelperConfig is Script{
     }
 
     function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory anvilNetworkConfig) {
+        // Check to see if we set an active network config
         if (activeNetworkConfig.priceFeed != address(0)) {
             return activeNetworkConfig;
         }

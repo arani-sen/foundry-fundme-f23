@@ -9,6 +9,7 @@ contract DeployFundMe is Script {
     function run() external returns (FundMe){
 
         HelperConfig helperConfig = new HelperConfig();
+        address priceFeed = helperConfig.activeNetworkConfig();
 
         vm.startBroadcast();
         FundMe fundMe = new FundMe(helperConfig.address);
